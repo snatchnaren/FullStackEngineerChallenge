@@ -1,0 +1,31 @@
+CREATE TABLE employee (
+	id BIGSERIAL,
+    name VARCHAR(100) NOT NULL,
+	email_id VARCHAR(100) NOT NULL,
+	is_active BOOLEAN NOT NULL,
+	created_ts TIMESTAMP WITH TIME ZONE,
+	CONSTRAINT "PK_Employee" PRIMARY KEY(id)
+);
+
+CREATE TABLE review_request (
+    id BIGSERIAL,
+    assigned_to INTEGER NOT NULL,
+    request_sent_to INTEGER NOT NULL,
+	status VARCHAR(50) NOT NULL,
+	assigned_ts TIMESTAMP WITH TIME ZONE,
+	CONSTRAINT "PK_ReviewRequest" PRIMARY KEY(id),
+    CONSTRAINT "FK_AssignedTo" FOREIGN KEY(assigned_to) REFERENCES employee(id),
+	CONSTRAINT "FK_RequestSentTo" FOREIGN KEY(request_sent_to) REFERENCES employee(id)
+);
+
+CREATE TABLE review (
+    id BIGSERIAL,
+    employee_id INTEGER NOT NULL,
+    request_id INTEGER NOT NULL,
+	review TEXT NOT NULL,
+	is_active BOOLEAN NOT NULL,
+ 	submitted_ts TIMESTAMP WITH TIME ZONE,
+	CONSTRAINT "PK_Review" PRIMARY KEY(id),
+    CONSTRAINT "FK_EmployeeID" FOREIGN KEY(employee_id) REFERENCES employee(id),
+	CONSTRAINT "FK_RequestID" FOREIGN KEY(request_id) REFERENCES review_request(id)
+);
