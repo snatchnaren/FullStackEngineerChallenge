@@ -41,7 +41,7 @@ const Save = (assigned_to, request_sent_to) => {
 
 const GetByEmployees = (assigned_to, request_sent_to) => {
     /**
-     * We're using limit as 1. So we going with db.one
+     * We're using limit as 1. So we going with db.oneOrNone
      */
     const response = DB.oneOrNone(
         `
@@ -55,17 +55,34 @@ const GetByEmployees = (assigned_to, request_sent_to) => {
             WHERE assigned_to='${assigned_to}' AND
             request_sent_to='${request_sent_to}' AND
             status='${REVIEW_REQUEST_STATUS.ASSIGNED}'
-        `,
-    ).then(employee => {
-        return employee;
+        `
+    ).then(reviewRequest => {
+        return {status: 'success', data: reviewRequest};
     }).catch(error => {
-        console.log(error)
-        return 'error'
+        return {status: 'error', data: error};
+    });
+    return response;
+}
+
+const UpdateStatusAsSubmitted = (review_id) => {
+    const response = DB.oneOrNone(
+        `
+            UPDATE ${TABLE_NAME} 
+            SET
+            status='${REVIEW_REQUEST_STATUS.SUBMITTED}' 
+            WHERE
+            id=${review_id}
+        `
+    ).then(reviewRequest => {
+        return {status: 'success', data: reviewRequest};
+    }).catch(error => {
+        return {status: 'error', data: error};
     });
     return response;
 }
 
 module.exports = {
     Save: Save,
-    GetByEmployees: GetByEmployees
+    GetByEmployees: GetByEmployees,
+    UpdateStatusAsSubmitted: UpdateStatusAsSubmitted
 }
